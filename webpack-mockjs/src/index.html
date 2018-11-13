@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .list-container {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <img src="./images/bg.jpg" width="50" height="50">
+  <i class="iconfont icon-jianpan"></i>
+  jsonp：<input type="text" name="input-search" value="卫衣">
+  <button id="btn-search">搜索</button>
+  <div class="wrapper">
+    <p>文字测试</p>
+  </div>
+  <div class="list-container"></div>
+</body>
+</html>
+<script>
+  let searchInput = document.getElementsByName('input-search');
+  let searchBtn = document.getElementById('btn-search');
+  let listContainer = document.getElementsByClassName('list-container');
+
+  searchBtn.addEventListener('click', event => {
+    getList();
+  })
+
+  function getData () {
+    // http://suggest.taobao.com/sug?code=utf-8&q=商品关键字&callback=cb
+    jsonp('http://suggest.taobao.com/sug', {
+      param: `code=utf-8&q=${searchInput[0].value}&callback`
+    }, (error, data) => {
+      if (error) {
+        console.log(error)
+        return
+      }
+
+      renderList(data.result)
+    })
+  }
+
+  function renderList (data) {
+    const listContainer = document.getElementsByClassName('list-container');
+    let fragment = document.createDocumentFragment();
+    let ul = document.createElement('ul');
+    let li = null;
+    
+    data.forEach(item => {
+      li = document.createElement('li');
+      li.innerText = item[0]
+      li.style = 'list-style: none; padding: 5px;';
+      fragment.appendChild(li)
+    })
+
+    listContainer[0].innerHTML = ''
+    listContainer[0].appendChild(fragment);
+  }
+
+  function getList () {
+    axios({
+      method: 'get',
+      url: '/list'
+    }).then(response => {
+      renderList(response.data.result)
+    })
+  }
+  
+  
+</script>
