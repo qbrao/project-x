@@ -22,3 +22,4 @@ npm run dev
 
 - [一个简单的 webpack 项目](./webpack/README.md)
 - [如何使用 Mock.js](./webpack-mockjs/README.md)
+- [如何使用 vue-cli 3.x](./vue-cli3-test/README.md)
