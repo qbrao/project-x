@@ -113,10 +113,10 @@ module.exports = {
  ( ) E2E Testing
  ```
 
- 最有有两个注意的地方：
+ 有两个注意的地方：
 
-1. 选择 postcss、browserslist、eslintConfig 等一些配置的位置，放在 package.json 中还是各自独立成文件。
-2. 最后会让选择是否设置为自定义预设，需要设置一个名字，下次使用 `vue create` 创建项目时，就会多一个选项，这个选项就是上次自定义的预设，可以使用 `vue config` 命令来审查或修改全局的 CLI 配置。
+1. 需要选择 postcss、browserslist、eslintConfig 等一些配置的存放位置，放在 package.json 中还是各自独立成文件。
+2. 最后可以选择是否设置为自定义预设，需要设置一个名字，下次使用 `vue create` 创建项目时，就会多一个选项，这个选项就是上次自定义的预设，可以使用 `vue config` 命令来审查或修改全局的 CLI 配置。
 
 ## vue config
 
