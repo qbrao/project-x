@@ -7,10 +7,16 @@ export const loginRouter = {
   name: 'login',
   component: () => import('@/views/login')
 }
+
 export const homeRouter = {
   path: '/home',
   name: 'home',
   component: () => import('@/views/home')
+}
+
+export const undefinedPage = {
+  path: '*',
+  redirect: '/404'
 }
 
 // 作为 main 组件的子页面展示并且在左侧菜单显示的路由写在 appRouter 里
@@ -19,6 +25,11 @@ export const appRouter = [{
   name: 'data',
   component: main,
   children: [{
+      path: '/404',
+      name: '404',
+      component: () => import('@/views/404')
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('@/views/dashboard')
@@ -39,5 +50,6 @@ export const appRouter = [{
 export const routes = [
   loginRouter,
   homeRouter,
+  undefinedPage,
   ...appRouter
 ];

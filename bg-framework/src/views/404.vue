@@ -3,13 +3,17 @@
 
 <template>
   <div>
-    <p>login</p>
-    <p><router-link to="home">home</router-link></p>
+    <Exception type="404"></Exception>
   </div>
 </template>
 
 <script>
+import Exception from "@/components/exception";
+
 export default {
+  components: {
+    Exception
+  },
   data() {
     return {};
   },
