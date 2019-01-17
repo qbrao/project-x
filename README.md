@@ -11,6 +11,9 @@
 大部分项目只需要执行下面的操作即可运行。
 
 ```sh
+# 下载代码
+git clone https://github.com/qbrao/project-x.git
+
 # 建议使用 taobao 镜像安装
 cnpm install
 
