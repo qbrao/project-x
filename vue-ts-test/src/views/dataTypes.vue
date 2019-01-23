@@ -10,6 +10,8 @@
     <p>interface demo1：{{getStudent({name: 'bob', age: 15})}}</p>
     <p>interface demo2：学生id：{{student.id}}，姓名：{{student.name}}，年龄：{{student.age}}，爱好：{{student.hobby}}，地址：{{student.address}}</p>
     <p>使用接口表示数组：{{arrayList}}</p>
+    <p><button @click="thisTest">this1</button><button @click="thisArrowTest">this2</button></p>
+    <p>设置undefined的属性无法被vue检测变化<input type="text" v-model="u">{{u}}</p>
   </div>
 </template>
 
@@ -29,6 +31,15 @@ import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
  * @todo 类型断言
  * @todo 申明文件
  * @todo 内置对象
+ * @todo 进阶
+ * @todo 类型别名
+ * @todo 字符串字面量类型
+ * @todo 元祖
+ * @todo 枚举
+ * @todo 类
+ * @todo 类与接口
+ * @todo 泛型
+ * @todo 申明合并
  */
 export default class Home extends Vue {
   name: string = 'qbrao';
@@ -66,6 +77,14 @@ export default class Home extends Vue {
   // 使用接口来实现对象类型的约束
   getStudent(person: IPerson) {
     return `学生的名字是：${person.name}，年龄为：${person.age}`
+  }
+
+  // this 测试
+  thisTest() {
+    this.name = 'aaaa'
+  }
+  thisArrowTest = ()=> {
+    this.name = 'bbbb'
   }
 }
 
