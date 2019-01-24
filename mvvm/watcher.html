@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>MVVM - observe</title>
+    <style>
+      html {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <form>
+        <input type="text" v-model="number" />
+        <button type="button" v-click="increment">增加</button>
+      </form>
+      <h3 v-bind="number"></h3>
+      <form>
+        <input type="text" v-model="count" />
+        <button type="button" v-click="incre">增加</button>
+      </form>
+      <h3 v-bind="count"></h3>
+    </div>
+    <script>
+      function Mvvm(options) {
+        this._init(options);
+      }
+
+      Mvvm.prototype._init = function(options) {
+        this.$el = document.querySelector(options.el);
+        this.$data = options.data;
+        this.$methods = options.methods;
+
+        /* _binding保存着model与view的映射关系，也就是我们前面定义的Watcher的实例。
+         * 当model改变时，我们会触发其中的指令类更新，保证view也能实时更新
+         */
+        this._binding = {};
+        this._observe(this.$data);
+        this._complie(this.$el);
+      };
+
+      /*
+       * 数据劫持
+       * 通过递归给 data 对象的所有属性添加 get 和 set 方法
+       */
+      Mvvm.prototype._observe = function(obj) {
+        var _this = this;
+        for (let key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            _this._binding[key] = {
+              _directives: []
+            };
+            console.log("this._binding[key]:", this._binding[key]);
+
+            let value = obj[key];
+
+            if (!value || typeof value === "object") {
+              // 如果是对象深度劫持
+              this._observe(value);
+            }
+
+            let binding = this._binding[key];
+
+            Object.defineProperty(obj, key, {
+              enumerable: true,
+              configurable: true,
+              get() {
+                return value;
+              },
+              set(val) {
+                if (value === val) return;
+                value = val;
+                binding._directives.forEach(item => {
+                  item.update();
+                });
+              }
+            });
+          }
+        }
+      };
+
+      /*
+       * 更新视图
+       */
+      function Watcher(name, el, vm, exp, attr) {
+        this.name = name; // 指令名称，例如文本节点，该值设为"text"
+        this.el = el; // 指令对应的DOM元素
+        this.vm = vm; // 指令所属 mvvm 实例
+        this.exp = exp; // 指令对应的值，本例如"number"
+        this.attr = attr; // 绑定的属性值，本例为"innerHTML"
+
+        this.update();
+      }
+
+      Watcher.prototype.update = function() {
+        /* 比如 H3.innerHTML = this.data.number;
+         * 当number改变时，会触发这个update函数，保证对应的DOM内容进行了更新。
+         */
+        this.el[this.attr] = this.vm.$data[this.exp];
+      };
+
+      /* 编译指令
+       */
+      Mvvm.prototype._complie = function(root) {
+        const _this = this;
+        const nodes = root.children;
+
+        for (var i = 0, l = nodes.length; i < l; i++) {
+          let node = nodes[i];
+          if (node.children.length) {
+            this._complie(node);
+          }
+
+          if (node.hasAttribute("v-click")) {
+            node.onclick = (function() {
+              let attrValue = node.getAttribute("v-click");
+              // bind是使data的作用域与method函数的作用域保持一致
+              return _this.$methods[attrValue].bind(_this.$data);
+            })();
+          }
+
+          if (
+            node.hasAttribute("v-model") &&
+            (node.tagName === "INPUT" || node.tagName === "TEXTAREA")
+          ) {
+            node.addEventListener(
+              "input",
+              (function(key) {
+                let attrValue = node.getAttribute("v-model");
+                _this._binding[attrValue]._directives.push(
+                  new Watcher("input", node, _this, attrValue, "value")
+                );
+
+                return function() {
+                  _this.$data[attrValue] = nodes[key].value;
+                };
+              })(i)
+            );
+          }
+
+          if (node.hasAttribute("v-bind")) {
+            let attrValue = node.getAttribute("v-bind");
+            _this._binding[attrValue]._directives.push(
+              new Watcher("text", node, _this, attrValue, "innerHTML")
+            );
+          }
+        }
+      };
+
+      let app = new Mvvm({
+        el: "#app",
+        data: {
+          number: 0,
+          count: 0
+        },
+        methods: {
+          increment() {
+            console.log(1111);
+            this.number++;
+          },
+          incre() {
+            console.log(1111);
+            this.count++;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
